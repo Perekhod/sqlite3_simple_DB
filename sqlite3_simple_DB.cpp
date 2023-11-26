@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <string>
 #include <iomanip>
 #include <limits>
@@ -32,7 +32,7 @@ int getValidMonthInput() {
         std::cin >> month;
 
         if (std::cin.fail() || month < 1 || month > 12) {
-            std::cin.clear (); // Сброс флага ошибки
+            std::cin.clear(); // Сброс флага ошибки
             std::cin.ignore(); // Очистка буфера ввода
             std::cerr << "Некорректный ввод. Пожалуйста, введите число от 1 до 12.\n";
         }
@@ -74,13 +74,13 @@ void deleteEmployee(sqlite3* db, int employeeId) {
 
     if (rc == SQLITE_OK && sqlite3_step(stmt) == SQLITE_ROW) {
         std::cout << "Вы уверены, что хотите удалить следующего сотрудника?\n";
-        std::cout << "ID: " << sqlite3_column_int(stmt, 0)          << ", "
-            << "Фамилия: " << sqlite3_column_text(stmt, 1)          << ", "
-            << "Имя: " << sqlite3_column_text(stmt, 2)              << ", "
-            << "Отчество: " << sqlite3_column_text(stmt, 3)         << ", "
-            << "Отдел: " << sqlite3_column_text(stmt, 4)            << ", "
-            << "Должность: " << sqlite3_column_text(stmt, 5)        << ", "
-            << "Месяц отпуска: " << sqlite3_column_text(stmt, 6)    << std::endl;
+        std::cout << "ID: " << sqlite3_column_int(stmt, 0) << ", "
+            << "Фамилия: " << sqlite3_column_text(stmt, 1) << ", "
+            << "Имя: " << sqlite3_column_text(stmt, 2) << ", "
+            << "Отчество: " << sqlite3_column_text(stmt, 3) << ", "
+            << "Отдел: " << sqlite3_column_text(stmt, 4) << ", "
+            << "Должность: " << sqlite3_column_text(stmt, 5) << ", "
+            << "Месяц отпуска: " << sqlite3_column_text(stmt, 6) << std::endl;
 
         char confirm;
         std::cout << "Введите 'y' для подтверждения удаления или любой другой символ для отмены: ";
@@ -176,6 +176,39 @@ void clearEmployeeTable(sqlite3* db) {
     }
 }
 
+// Функция для вывода списка сотрудников определенного отдела
+void showEmployeesByDepartment(sqlite3* db, const std::string& department) {
+    std::string query = "SELECT * FROM employees WHERE department = '" + department + "';";
+
+    sqlite3_stmt* stmt;
+    int rc = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, 0);
+
+    if (rc == SQLITE_OK) {
+        printEmployeeList(stmt);
+        sqlite3_finalize(stmt);
+    }
+    else {
+        std::cerr << "Ошибка при выполнении запроса: " << sqlite3_errmsg(db) << std::endl;
+    }
+}
+
+// Функция для вывода списка сотрудников определенной должности
+void showEmployeesByPosition(sqlite3* db, const std::string& position) {
+    std::string query = "SELECT * FROM employees WHERE position = '" + position + "';";
+
+    sqlite3_stmt* stmt;
+    int rc = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, 0);
+
+    if (rc == SQLITE_OK) {
+        printEmployeeList(stmt);
+        sqlite3_finalize(stmt);
+    }
+    else {
+        std::cerr << "Ошибка при выполнении запроса: " << sqlite3_errmsg(db) << std::endl;
+    }
+}
+
+// Внесем изменения в printMenu и добавим новые пункты
 void printMenu() {
     std::cout << "Выберите действие:\n"
         << "1. Посмотреть список сотрудников\n"
@@ -183,6 +216,8 @@ void printMenu() {
         << "3. Выбрать сотрудников по месяцу отпуска\n"
         << "4. Удалить сотрудника\n"
         << "5. Очистить таблицу\n"
+        << "6. Показать сотрудников по отделу\n"
+        << "7. Показать сотрудников по должности\n"
         << "0. Выйти\n";
 }
 
@@ -274,6 +309,20 @@ int main() {
             break;
         case 5:
             clearEmployeeTable(db);
+            break;
+        }
+        case 6: {
+            std::string department;
+            std::cout << "Введите отдел для просмотра сотрудников: ";
+            std::cin >> department;
+            showEmployeesByDepartment(db, department);
+            break;
+        }
+        case 7: {
+            std::string position;
+            std::cout << "Введите должность для просмотра сотрудников: ";
+            std::cin >> position;
+            showEmployeesByPosition(db, position);
             break;
         }
         case 0:
