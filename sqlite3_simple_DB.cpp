@@ -32,7 +32,7 @@ int getValidMonthInput() {
         std::cin >> month;
 
         if (std::cin.fail() || month < 1 || month > 12) {
-            std::cin.clear(); // Сброс флага ошибки
+            std::cin.clear (); // Сброс флага ошибки
             std::cin.ignore(); // Очистка буфера ввода
             std::cerr << "Некорректный ввод. Пожалуйста, введите число от 1 до 12.\n";
         }
@@ -74,13 +74,13 @@ void deleteEmployee(sqlite3* db, int employeeId) {
 
     if (rc == SQLITE_OK && sqlite3_step(stmt) == SQLITE_ROW) {
         std::cout << "Вы уверены, что хотите удалить следующего сотрудника?\n";
-        std::cout << "ID: " << sqlite3_column_int(stmt, 0) << ", "
-            << "Фамилия: " << sqlite3_column_text(stmt, 1) << ", "
-            << "Имя: " << sqlite3_column_text(stmt, 2) << ", "
-            << "Отчество: " << sqlite3_column_text(stmt, 3) << ", "
-            << "Отдел: " << sqlite3_column_text(stmt, 4) << ", "
-            << "Должность: " << sqlite3_column_text(stmt, 5) << ", "
-            << "Месяц отпуска: " << sqlite3_column_text(stmt, 6) << std::endl;
+        std::cout << "ID: "         << sqlite3_column_int (stmt, 0) << ", "
+            << "Фамилия: "          << sqlite3_column_text(stmt, 1) << ", "
+            << "Имя: "              << sqlite3_column_text(stmt, 2) << ", "
+            << "Отчество: "         << sqlite3_column_text(stmt, 3) << ", "
+            << "Отдел: "            << sqlite3_column_text(stmt, 4) << ", "
+            << "Должность: "        << sqlite3_column_text(stmt, 5) << ", "
+            << "Месяц отпуска: "    << sqlite3_column_text(stmt, 6) << std::endl;
 
         char confirm;
         std::cout << "Введите 'y' для подтверждения удаления или любой другой символ для отмены: ";
@@ -108,6 +108,7 @@ void deleteEmployee(sqlite3* db, int employeeId) {
     sqlite3_finalize(stmt);
 }
 
+// Выводит форматированный список сотрудников на экран, используя данные из результата SQL-запроса
 void printEmployeeList(sqlite3_stmt* stmt) {
     std::cout << std::left << std::setw(5) << "ID" << std::setw(15) << "Фамилия" << std::setw(15) << "Имя"
         << std::setw(15) << "Отчество" << std::setw(15) << "Отдел" << std::setw(15) << "Должность"
@@ -122,7 +123,7 @@ void printEmployeeList(sqlite3_stmt* stmt) {
     }
 }
 
-// Функция для вывода списка всех сотрудников
+// Выполняет SQL-запрос для выборки всех сотрудников из базы данных и вызывает printEmployeeList для их вывода
 void showEmployeeList(sqlite3* db) {
     std::string query = "SELECT * FROM employees;";
 
@@ -208,7 +209,7 @@ void showEmployeesByPosition(sqlite3* db, const std::string& position) {
     }
 }
 
-// Внесем изменения в printMenu и добавим новые пункты
+// Функция меню выбора
 void printMenu() {
     std::cout << "Выберите действие:\n"
         << "1. Посмотреть список сотрудников\n"
